@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		anim = gameObject.GetComponent<Animator> ();
-
 		rb2d = gameObject.GetComponent<Rigidbody2D> ();
 	}
 	
