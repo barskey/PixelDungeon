@@ -4,21 +4,37 @@ using UnityEngine;
 
 public class SpawnController : MonoBehaviour {
 
-	public GameObject enemy;
-	public float spawnDelay = 3f;
-	public int maxSpawn = 3;
+	public GameObject enemy; // Which enemy is spawned
+	public float spawnDelay = 3f; // Seconds between spawning new enemies
+	public int maxSpawn = 3; // max # of enemies allowed on screen
 	public float health = 100f;
+	public List<GameObject> patrolPoints = new List<GameObject> ();
+
+	private Animator anim;
 
 	void Awake ()
 	{
-		InvokeRepeating ("SpawnEnemy", 1f, spawnDelay);
+		anim = gameObject.GetComponent<Animator> ();
+
+		InvokeRepeating ("SpawnEnemy", spawnDelay, spawnDelay);
+	}
+
+	void TakeDamage (float dmg)
+	{
+		health -= dmg;
+
+		anim.SetFloat ("Health", health);
+
+		// if health < 0, destroy itself
 	}
 
 	void SpawnEnemy ()
 	{
 		if (GetEnemyCount () < maxSpawn) {
 			Debug.Log ("Spawning enemy...");
-			GameObject.Instantiate (enemy, gameObject.transform.position, Quaternion.identity);
+			// set enemy list of patrol points so it keeps them after this is destroyed
+			GameObject newEnemy = GameObject.Instantiate (enemy, gameObject.transform.position, Quaternion.identity);
+			newEnemy.GetComponent<EnemyController> ().spawner = this;
 		}
 	}
 

@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
 	public float speed;
+	[HideInInspector]
+	public GridUnit playerGrid;
 
 	private Animator anim;
 	private Rigidbody2D rb2d;
@@ -25,7 +27,9 @@ public class PlayerController : MonoBehaviour {
 		anim.SetFloat ("SpeedX", inputX);
 		anim.SetFloat ("SpeedY", inputY);
 
-		rb2d.velocity = new Vector2 (inputX * speed, inputY * speed);
+		Vector2 v = new Vector2 (inputX * speed, inputY * speed);
+
+		rb2d.velocity = Vector2.ClampMagnitude (v, speed);
 	}
 
 	void FixedUpdate ()
@@ -54,5 +58,11 @@ public class PlayerController : MonoBehaviour {
 		} else {
 			anim.SetBool ("Walking", false);
 		}
+	}
+
+	void OnTriggerEnter2D (Collider2D col)
+	{
+		if (col.name.StartsWith ("GridUnit"))
+			playerGrid = col.GetComponent<GridUnit> ();
 	}
 }
