@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	public float speed;
+	public float speed = 0.5f;
+	public GameObject projectile;
+	public float projectileForce = 100f;
 	[HideInInspector]
 	public GridUnit playerGrid;
 
 	private Animator anim;
 	private Rigidbody2D rb2d;
+	private Transform lookDir; // used to keep track of which direction player is aiming/moving. Y axis points toward last movement.
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
 	{
-		anim = gameObject.GetComponent<Animator> ();
-		rb2d = gameObject.GetComponent<Rigidbody2D> ();
+		anim = gameObject.GetComponent <Animator> ();
+		rb2d = gameObject.GetComponent <Rigidbody2D> ();
+		lookDir = transform.GetChild (0);
 	}
 	
 	// Update is called once per frame
@@ -30,6 +34,10 @@ public class PlayerController : MonoBehaviour {
 		Vector2 v = new Vector2 (inputX * speed, inputY * speed);
 
 		rb2d.velocity = Vector2.ClampMagnitude (v, speed);
+
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			Attack ();
+		}
 	}
 
 	void FixedUpdate ()
@@ -38,26 +46,21 @@ public class PlayerController : MonoBehaviour {
 		float lastInputY = Input.GetAxisRaw ("Vertical");
 
 		if (lastInputX != 0 || lastInputY != 0) {
+			if (lastInputX != 0 || lastInputY != 0) // only set aim if actually receiving input
+				lookDir.localRotation = Quaternion.LookRotation (Vector3.forward, new Vector3 (lastInputX, lastInputY));
+
 			anim.SetBool ("Walking", true);
-
-			if (lastInputX > 0) {
-				anim.SetFloat ("LastMoveX", 1f);
-			} else if (lastInputX < 0) {
-				anim.SetFloat ("LastMoveX", -1f);
-			} else {
-				anim.SetFloat ("LastMoveX", 0);
-			}
-
-			if (lastInputY > 0) {
-				anim.SetFloat ("LastMoveY", 1f);
-			} else if (lastInputY < 0) {
-				anim.SetFloat ("LastMoveY", -1f);
-			} else {
-				anim.SetFloat ("LastMoveY", 0);
-			}
+			anim.SetFloat ("LastMoveX", lastInputX);
+			anim.SetFloat ("LastMoveY", lastInputY);
 		} else {
 			anim.SetBool ("Walking", false);
 		}
+	}
+
+	void Attack ()
+	{
+		GameObject prj = GameObject.Instantiate (projectile, lookDir.position, lookDir.rotation);
+		prj.GetComponent <Rigidbody2D> ().AddForce (projectileForce * lookDir.transform.up.normalized);
 	}
 
 	void OnTriggerEnter2D (Collider2D col)

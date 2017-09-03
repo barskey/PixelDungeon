@@ -82,6 +82,7 @@ public class AI_Patrol : MonoBehaviour {
 			//Debug.Log ("Changing to Rush");
 			sm.ChangeState (States.Rush, StateTransition.Safe);
 		} else if (distToTarget < 0.02f) {
+			//Debug.Log (string.Format("pathIndex: {0}, total points: {1}", pathIndex, pathComp.navPath.Count));
 			if (pathIndex == pathComp.navPath.Count - 1) { // at the end of the navpath list
 				patrolIndex++;
 				if (patrolIndex >= patrolPoints.Count) // loop back at zero if end of patrol points
