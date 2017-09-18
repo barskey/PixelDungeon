@@ -35,25 +35,22 @@ public class PlayerController : MonoBehaviour {
 
 		rb2d.velocity = Vector2.ClampMagnitude (v, speed);
 
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			Attack ();
-		}
-	}
+		if (inputX != 0 || inputY != 0) // if input is being received
+		{
+			lookDir.localRotation = Quaternion.LookRotation (Vector3.forward, new Vector3 (inputX, inputY));
 
-	void FixedUpdate ()
-	{
-		float lastInputX = Input.GetAxisRaw ("Horizontal");
-		float lastInputY = Input.GetAxisRaw ("Vertical");
-
-		if (lastInputX != 0 || lastInputY != 0) {
-			if (lastInputX != 0 || lastInputY != 0) // only set aim if actually receiving input
-				lookDir.localRotation = Quaternion.LookRotation (Vector3.forward, new Vector3 (lastInputX, lastInputY));
-
+			anim.SetFloat ("LastMoveX", inputX);
+			anim.SetFloat ("LastMoveY", inputY);
 			anim.SetBool ("Walking", true);
-			anim.SetFloat ("LastMoveX", lastInputX);
-			anim.SetFloat ("LastMoveY", lastInputY);
-		} else {
+		}
+		else // no input is being received
+		{
 			anim.SetBool ("Walking", false);
+		}
+
+		if (Input.GetKeyDown (KeyCode.Space))
+		{
+			Attack ();
 		}
 	}
 
@@ -65,7 +62,8 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D (Collider2D col)
 	{
-		if (col.name.StartsWith ("GridUnit"))
+		if (col.name.StartsWith ("GridUnit")) {
 			playerGrid = col.GetComponent<GridUnit> ();
+		}
 	}
 }

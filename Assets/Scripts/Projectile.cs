@@ -8,7 +8,8 @@ public class Projectile : MonoBehaviour {
 	public float duration = 3f; // time in secs before going poof
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		Destroy (gameObject, duration);
 	}
 

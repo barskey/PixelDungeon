@@ -58,15 +58,12 @@ public class AI_Patrol : MonoBehaviour {
 
 	private void Patrol_Enter ()
 	{
-		//Debug.Log ("Entered state Patrol.");
-
 		// move to next patrol point
 		if (enemyComp.currentGrid) {
 			pathComp.FindNewPath (enemyComp.currentGrid, patrolPoints [patrolIndex].GetComponent<PatrolPoint> ().gridUnit);
 			pathIndex = 0; 
 			moveTo = pathComp.GetGridPos (pathComp.navPath[pathIndex]);
 		}
-		//Debug.Log (pathComp.GetGridUnit (moveTo));
 	}
 
 	private void Patrol_Update ()
@@ -83,10 +80,10 @@ public class AI_Patrol : MonoBehaviour {
 			sm.ChangeState (States.Rush, StateTransition.Safe);
 		} else if (distToTarget < 0.02f) {
 			//Debug.Log (string.Format("pathIndex: {0}, total points: {1}", pathIndex, pathComp.navPath.Count));
-			if (pathIndex == pathComp.navPath.Count - 1) { // at the end of the navpath list
+			if (pathIndex >= pathComp.navPath.Count - 1) { // at the end of the navpath list
 				patrolIndex++;
 				if (patrolIndex >= patrolPoints.Count) // loop back at zero if end of patrol points
-					patrolIndex = 0;
+				patrolIndex = 0;
 				Debug.Log ("Entering Search");
 				sm.ChangeState (States.Search, StateTransition.Safe);
 			} else { // increment index and get next point
@@ -167,7 +164,7 @@ public class AI_Patrol : MonoBehaviour {
 		pathComp.FindNewPath (enemyComp.currentGrid, player.playerGrid);
 		pathIndex = 0;
 
-		moveTo = pathComp.GetGridPos (pathComp.navPath[pathIndex]);
+		moveTo = pathComp.GetGridPos (pathComp.navPath [pathIndex]);
 	}
 
 	private void Rush_Update ()
@@ -187,12 +184,12 @@ public class AI_Patrol : MonoBehaviour {
 			//Debug.Log ("Changing to Attack");
 			sm.ChangeState (States.Attack, StateTransition.Safe);
 		} else if (distToTarget < 0.03f) {
-			if (pathIndex == pathComp.navPath.Count - 1) { // at the end of the navpath list
+			if (pathIndex >= pathComp.navPath.Count - 1) { // at the end of the navpath list
 				//Debug.Log ("Entering Search");
 				sm.ChangeState (States.Search, StateTransition.Safe);
 			} else { // increment index and get next point
 				pathIndex++;
-				moveTo = pathComp.GetGridPos (pathComp.navPath[pathIndex]);
+				moveTo = pathComp.GetGridPos (pathComp.navPath [pathIndex]);
 			}
 		}
 
@@ -200,7 +197,7 @@ public class AI_Patrol : MonoBehaviour {
 		if (SeesPlayer ()) {
 			pathComp.FindNewPath (enemyComp.currentGrid, player.playerGrid);
 			pathIndex = 0;
-			moveTo = pathComp.GetGridPos (pathComp.navPath[pathIndex]);
+			moveTo = pathComp.GetGridPos (pathComp.navPath [pathIndex]);
 		}
 	}
 
@@ -253,7 +250,7 @@ public class AI_Patrol : MonoBehaviour {
 		if (playerAngle <= enemyComp.seeAngle && playerDist <= enemyComp.seeDist) {
 			RaycastHit2D hit = Physics2D.Raycast (transform.position, playerDir, playerDist, enemyComp.cantSeeThru);
 			if (!hit) { // no walls in the way
-				Debug.Log ("I see you!");
+				//Debug.Log ("I see you!");
 				return true;
 			}
 		}

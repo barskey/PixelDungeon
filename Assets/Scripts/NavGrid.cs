@@ -11,23 +11,14 @@ public class NavGrid : MonoBehaviour {
 	public Camera gameCam;
 	public GameObject gridUnit;
 	public bool drawAlways = false;
-	public bool go = false;
 
 	private float wd;
 	private float ht;
 	private float startX;
 	private float startY;
 
-	void Update()
+	public void CreateGrid()
 	{
-		if (go)
-			CreateGrid ();
-	}
-
-	void CreateGrid()
-	{
-		go = false; // make sure this only runs once
-
 		ht = gameCam.orthographicSize * 2;
 		wd = ((float)gameCam.pixelWidth / (float)gameCam.pixelHeight) * ht;
 		gridRows = (int)Mathf.Round (ht / gridSize);
